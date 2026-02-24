@@ -1,26 +1,12 @@
-name: Laravel CI
+name: Laravel CI/CD
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  laravel-tests:
+  laravel-build:
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: 
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
 
     steps:
     - uses: actions/checkout@v3
@@ -39,8 +25,13 @@ jobs:
     - name: Generate Key
       run: php artisan key:generate
 
-    - name: Run Migrations
-      run: php artisan migrate --force
-
     - name: Run Tests
       run: php artisan test
+
+  deploy:
+    needs: laravel-build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Simulated Deployment
+      run: echo "🚀 Deployment Successful!"
